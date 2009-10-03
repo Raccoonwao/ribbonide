@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.hexapixel.widgets.ribbon.ev
+Bundle-SymbolicName: com.hexapixel.widgets.ribbon.ev
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: Elias Volanakis
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.swt
+Export-Package: com.hexapixel.widgets.generic;version="0.0.1.qualifier",
+ com.hexapixel.widgets.ribbon;version="0.0.1.qualifier"
