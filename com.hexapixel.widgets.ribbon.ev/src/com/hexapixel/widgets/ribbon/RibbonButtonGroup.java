@@ -52,7 +52,9 @@ public class RibbonButtonGroup extends AbstractRibbonGroupItem {
 		mButtons.remove(item);
 	}
 	
+	@Override
 	public void dispose() {
+		super.dispose();
 		mButtons.clear(); 
 	}
 }

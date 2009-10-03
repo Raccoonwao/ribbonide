@@ -23,7 +23,9 @@ public class RibbonGroupSeparator extends AbstractRibbonGroupItem {
 		parent.toolItemAdded(this);
 	}	
 
+	@Override
 	public void dispose() {
+		super.dispose();
 		mParent.toolItemDisposed(this);
 	}
 }

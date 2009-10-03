@@ -89,9 +89,9 @@ public class RibbonButton extends AbstractRibbonGroupItem {
 		setToolbarButton(true);
 	}
 	
+	@Override
 	public void dispose() {
-		if (mParent == null)
-			return;
+		super.dispose();
 		
 		if (mParent instanceof RibbonToolbarGrouping) {
 			((RibbonToolbarGrouping)mParent).removeButton(this);

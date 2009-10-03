@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.hexapixel.widgets.ribbon.ev
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: Elias Volanakis
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.swt
+Require-Bundle: org.eclipse.swt,
+ org.junit;bundle-version="3.8.2";resolution:=optional
 Export-Package: com.hexapixel.widgets.generic;version="0.0.1.qualifier",
  com.hexapixel.widgets.ribbon;version="0.0.1.qualifier"

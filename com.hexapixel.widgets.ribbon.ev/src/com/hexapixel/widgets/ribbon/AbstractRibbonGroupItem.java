@@ -7,7 +7,9 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com  - initial API and implementation
- *    eclipse-dev@volanakis.de - added STYLE_PUSH, auto-redraw on enablement change
+ *    eclipse-dev@volanakis.de - added STYLE_PUSH, auto-redraw on enablement change,
+ *                               support for dispose listeners, lazy init for selection
+ *                               listeners
  *******************************************************************************/ 
 
 package com.hexapixel.widgets.ribbon;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -26,8 +30,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
-
-import com.hexapixel.widgets.generic.ImageCache;
 
 public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposable {
 
@@ -87,6 +89,7 @@ public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposab
 	private int mToolbarSide = TOOLBAR_SIDE_NOT_LEFT_OR_RIGHT;
 	
 	private List<SelectionListener> mSelectionListeners;
+	private List<IDisposeListener>   mDisposeListeners; 
 	
 	private Menu mMenu;
 	
@@ -131,7 +134,6 @@ public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposab
 	}
 
 	private void init() {
-		mSelectionListeners = new ArrayList<SelectionListener>();
 		if (mParent != null) {
 			mMenu = new Menu(mParent.getParent());
 			mMenu.addMenuListener(this);
@@ -448,15 +450,21 @@ public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposab
 	}
 	
 	public void addSelectionListener(SelectionListener listener) {
+		if (mSelectionListeners == null)
+			mSelectionListeners = new ArrayList<SelectionListener>();
 		if (!mSelectionListeners.contains(listener))
 			mSelectionListeners.add(listener);
 	}
 	
 	public void removeSelectionListener(SelectionListener listener) {
-		mSelectionListeners.remove(listener);
+		if(mSelectionListeners != null)
+			mSelectionListeners.remove(listener);
 	}
 	
 	protected void notifySelectionListeners(MouseEvent me) {
+		if (mSelectionListeners == null)
+			return;
+		
 		Event e = new Event();
 		e.button = me.button;
 		e.data = this;
@@ -468,6 +476,30 @@ public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposab
 		SelectionEvent se = new SelectionEvent(e);
 		for (SelectionListener listener : mSelectionListeners) 
 			listener.widgetSelected(se);
+	}
+	
+	public void addDisposeListener(IDisposeListener listener) {
+		if (mDisposeListeners == null)
+			mDisposeListeners = new ArrayList<IDisposeListener>();
+		if (!mDisposeListeners.contains(listener))
+			mDisposeListeners.add(listener);
+	}
+	
+	public void removeDisposeListener(IDisposeListener listener) {
+		if (mDisposeListeners != null)
+			mDisposeListeners.remove(listener);
+	}
+	
+	public void dispose() {
+		notifyDisposeListeners();
+		mDisposeListeners = null;
+	}
+	
+	private void notifyDisposeListeners() {
+		if (mDisposeListeners == null) 
+			return;
+		for (IDisposeListener listener : mDisposeListeners) 
+			listener.itemDisposed(this);
 	}
 	
 	public boolean isSplit() {

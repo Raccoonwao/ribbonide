@@ -21,7 +21,9 @@ public class RibbonCheckbox extends AbstractRibbonGroupItem {
 		parent.addButton(this);
 	}
 	
+	@Override
 	public void dispose() {
+		super.dispose();
 		mParent.dispose(this);
 	}
 	
