@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension
+         id="app"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.volanakis.ribbonide.internal.app.RibbonIDEApplication">
+         </run>
+      </application>
+   </extension>
+  <extension
+        point="org.eclipse.ui.themes">
+     <theme
+           id="de.volanakis.ribbonide.theme"
+           name="Eclipse Ribbon">
+        <colorOverride
+              id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
+              value="243,248,254">
+        </colorOverride>
+        <colorOverride
+              id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
+              value="240,240,240">
+        </colorOverride>
+        <colorOverride
+              id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START"
+              value="243,248,254">
+        </colorOverride>
+        <colorOverride
+              id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_END"
+              value="240,240,240">
+        </colorOverride>
+        <colorOverride
+              id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_START"
+              value="177,200,231">
+        </colorOverride>
+        <colorOverride
+              id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_END"
+              value="240,240,240">
+        </colorOverride>
+     </theme>
+  </extension>
+  <extension
+         point="org.eclipse.ui.presentationFactories">
+      <factory
+            name="Ribbon Presentation"
+            class="de.volanakis.ribbonide.internal.presentation.RibbonPresentationFactory"
+            id="de.volanakis.ui.ide.ribbon.presentation">
+      </factory>
+      <factory
+            name="Ribbon Presentation (Experimental)"
+            class="de.volanakis.ribbonide.internal.presentation.RibbonPresentationFactory2"
+            id="de.volanakis.ui.ide.ribbon.presentation2">
+      </factory>
+  </extension>
+  <extension
+        point="org.eclipse.ui.bindings">
+     <key
+           commandId="org.eclipse.ui.file.exit"
+           contextId="org.eclipse.ui.contexts.window"
+           platform="win32"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M3+F4">
+     </key>
+  </extension>
+</plugin>

@@ -1,0 +1,31 @@
+[DONE] * Ribbon buttons do not depress - added STYLE_PUSH
+[DONE] * Bug: close shell, answer 'no' in dialog -> exception
+[DONE] * Show window menu when ALT is pushed down
+[DONE] * Quicktoolbar: no visual feedback on push - works in demo - need to check
+[DONE] * Sync ribbon tab with active perspective -> perspective listener
+[DONE] * Edit Tab: make 'open type' big and 'find' small
+
+Committed:
+* Finish 1st iteration of the tabs
+* Hook buttons to the commands
+* QuickAccessToolbar: need run, debug, step icons
+
+Proposed:
+* About Ribbon: Help menu entry
+* Custom Presentation: local toolbar hidden by default -> removes clutter, better vspace usage  
+* Extend RibbonToolTip to work as a regular tooltip too - don't always need the large tt
+* QuickAccessToolbar: tooltips do not work
+* QuickAccessToolbar: push mouse button down, move mouse -> will drag window
+* Shell: cheese/flicker on resize - should use an SWT Tracker
+* BigButton stuck hover: click BB, click on view, hover still there, move cursor 
+  to Ribbon, hover updated -> try a close listener on the BB-menu, reset/repaint hover on close 
+* It seems that the image/text on large tb buttons is not always aligned -> check
+* Arrow on large split buttons is not always centered: check 'Run' button
+* Replace gray menus with - nice looking menus for Big Button, Split Arrow Button - see Chrome 3.0 omnibar menu (slightly transparent)
+
+Ideas:
+* Do we need a 'catch all' tab for all other perspectives?
+* 'Run tests' button on the ribbon, should show feedback (green / red)
+* Ambient information on the ribbon: build status, recent commits, mylyn
+* Bugzilla element for Ribbon? (search # or text, create new bug) 
+* Mechanism for allowing contributions? (focus on java not xml)

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse Ribbon UI
+Bundle-SymbolicName: de.volanakis.ribbonide;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: Elias Volanakis
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: com.hexapixel.widgets.ribbon.ev,
+ org.eclipse.core.runtime,
+ org.eclipse.equinox.app,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.ide.application
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.volanakis.ribbonide.internal.Activator
+Import-Package: org.osgi.service.log
