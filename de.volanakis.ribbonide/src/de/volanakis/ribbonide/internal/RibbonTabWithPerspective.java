@@ -21,6 +21,7 @@ import com.hexapixel.widgets.ribbon.RibbonTabFolder;
 
 final class RibbonTabWithPerspective extends RibbonTab {
 	private final String perspectiveId;
+	private boolean isBusy;
 
 	RibbonTabWithPerspective(RibbonTabFolder rtf, String name,
 			String perspectiveId) {
@@ -52,9 +53,10 @@ final class RibbonTabWithPerspective extends RibbonTab {
 	// ////////////////
 
 	private void switchPerspective(final String perspId) {
-		if (!PlatformUI.isWorkbenchRunning() || perspId == null) {
+		if (!PlatformUI.isWorkbenchRunning() || perspId == null || isBusy) {
 			return;
 		}
+		isBusy = true;
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		if (window != null) {
@@ -69,7 +71,11 @@ final class RibbonTabWithPerspective extends RibbonTab {
 			};
 			// this must be synchronous, because we want to switch perspective,
 			// switch tabs and update button enablement state all in one step
-			workbench.getDisplay().syncExec(op);
+			try {
+				workbench.getDisplay().syncExec(op);
+			} finally {
+				isBusy = false;
+			}
 		}
 	}
 }
