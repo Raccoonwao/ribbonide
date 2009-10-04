@@ -14,6 +14,7 @@ package com.hexapixel.widgets.ribbon;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -94,8 +95,11 @@ public class RibbonTester {
 		// Tab folder
 		//final RibbonTabFolder ftf = new RibbonTabFolder(inner, SWT.NONE);
 		RibbonTabFolder ftf = shell.getRibbonTabFolder();
-		ftf.setHelpImage(ImageCache.getImage("questionmark.gif"));
-		ftf.getHelpButton().setToolTip(new RibbonTooltip("Title", "Get Help Using Whatever This Is"));
+		Image helpImage = ImageCache.getImage("questionmark.gif");
+		if(helpImage != null) {
+			ftf.setHelpImage(helpImage);
+			ftf.getHelpButton().setToolTip(new RibbonTooltip("Title", "Get Help Using Whatever This Is"));
+		}
 		
 		//ftf.setDrawEmptyTabs(false);
 		// Tabs
@@ -106,7 +110,7 @@ public class RibbonTester {
 		new RibbonTab(ftf, "Empty");
 		
 		// Tooltip
-		RibbonTooltip toolTip = new RibbonTooltip("Some Action Title", "This is content text that\nsplits over\nmore than one\nline\n\\b\\c255000000and \\xhas \\bdifferent \\c000000200look \\xand \\bfeel.", ImageCache.getImage("tooltip.jpg"), ImageCache.getImage("questionmark.gif"), "Press F1 for more help"); 
+		RibbonTooltip toolTip = new RibbonTooltip("Some Action Title", "This is content text that\nsplits over\nmore than one\nline\n\\b\\c255000000and \\xhas \\bdifferent \\c000000200look \\xand \\bfeel.", ImageCache.getImage("tooltip.jpg"), helpImage, "Press F1 for more help"); 
 
 		// Group
 
@@ -164,7 +168,7 @@ public class RibbonTester {
 		new RibbonCheckbox(cbg, "Also a checkbox", SWT.NONE);
 		new RibbonCheckbox(cbg, "Many, aren't we?", SWT.NONE);
 		rc3.setEnabled(false);
-		RibbonTooltip cbTip = new RibbonTooltip("Title", "Checkbox description\n\\b\\c255000000Some bold and red \\xand\nSome not!", null, ImageCache.getImage("questionmark.gif"), "Press F1 for more help");
+		RibbonTooltip cbTip = new RibbonTooltip("Title", "Checkbox description\n\\b\\c255000000Some bold and red \\xand\nSome not!", null, helpImage, "Press F1 for more help");
 		rc3.setToolTip(cbTip);
 
 		rb.setToolTip(toolTip);
