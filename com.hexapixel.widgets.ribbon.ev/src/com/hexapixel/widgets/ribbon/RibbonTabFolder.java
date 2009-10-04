@@ -7,7 +7,8 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com  - initial API and implementation
- *    eclipse-dev@volanakis.de - fix: don't dispose shell when close is aborted 
+ *    eclipse-dev@volanakis.de - fix: don't dispose shell when close is aborted,
+ *                               fix: notify help button on click
  *******************************************************************************/ 
 
 package com.hexapixel.widgets.ribbon;
@@ -344,7 +345,7 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		if (mHelpButton != null) {
 			if (mHelpButton.isSelected()) {
 				if (isInside(me.x, me.y, mHelpButton.getBounds())) {
-					helpButtonClicked();
+					helpButtonClicked(me);
 					mHelpButton.setSelected(false);
 					mHelpButton.setHoverButton(true);
 					redraw(mHelpButton.getBounds());
@@ -361,8 +362,8 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		}
 	}
 	
-	private void helpButtonClicked() {
-		
+	private void helpButtonClicked(MouseEvent me) {
+		mHelpButton.notifySelectionListeners(me);
 	}
 
 	public void mouseMove(MouseEvent me) {
