@@ -10,6 +10,7 @@
  *******************************************************************************/
 package de.volanakis.ribbonide.internal.presentation;
 
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -32,6 +33,8 @@ import de.volanakis.ribbonide.internal.SharedColors;
  * has one.
  */
 public class RibbonPresentationFactory2 extends WorkbenchPresentationFactory {
+
+	private static final MouseTrackListener SASH_HOVER_LISTENER = new SashHoverListener();
 
 	@Override
 	public StackPresentation createEditorPresentation(Composite parent,
@@ -58,6 +61,7 @@ public class RibbonPresentationFactory2 extends WorkbenchPresentationFactory {
 	public Sash createSash(Composite parent, int style) {
 		Sash sash = super.createSash(parent, style);
 		sash.setBackground(Activator.getSharedColor(SharedColors.WINDOW_BG));
+		sash.addMouseTrackListener(SASH_HOVER_LISTENER);
 		return sash;
 	}
 

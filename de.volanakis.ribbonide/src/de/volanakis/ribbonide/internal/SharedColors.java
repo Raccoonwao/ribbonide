@@ -14,6 +14,9 @@ import org.eclipse.swt.graphics.RGB;
 
 public final class SharedColors {
 
+	/** Window background. */
 	public static final RGB WINDOW_BG = new RGB(177, 200, 231);
-
+	/** Window shash hover. */
+	public static final RGB WINDOW_SHASH_HOVER = new RGB(220, 233, 249);
+	// public static final RGB WINDOW_SHASH_HOVER = new RGB(255, 221, 126);
 }

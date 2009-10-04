@@ -12,6 +12,7 @@ package de.volanakis.ribbonide.internal.presentation;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -114,6 +115,8 @@ public class RibbonPresentationFactory extends WorkbenchPresentationFactory {
 		}
 	};
 
+	private static final MouseTrackListener SASH_HOVER_LISTENER = new SashHoverListener();
+
 	@Override
 	public StackPresentation createEditorPresentation(Composite parent,
 			IStackPresentationSite site) {
@@ -145,6 +148,7 @@ public class RibbonPresentationFactory extends WorkbenchPresentationFactory {
 	public Sash createSash(Composite parent, int style) {
 		Sash sash = super.createSash(parent, style);
 		sash.setBackground(Activator.getSharedColor(SharedColors.WINDOW_BG));
+		sash.addMouseTrackListener(SASH_HOVER_LISTENER);
 		return sash;
 	}
 
