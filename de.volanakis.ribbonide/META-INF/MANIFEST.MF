@@ -10,7 +10,9 @@ Require-Bundle: com.hexapixel.widgets.ribbon.ev,
  org.eclipse.equinox.app,
  org.eclipse.ui,
  org.eclipse.ui.ide,
- org.eclipse.ui.ide.application
+ org.eclipse.ui.ide.application,
+ org.eclipse.jdt.ui;resolution:=optional,
+ org.eclipse.pde.ui;resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.volanakis.ribbonide.internal.Activator
 Import-Package: org.osgi.service.log

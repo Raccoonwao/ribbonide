@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.hexapixel.widgets.ribbon.QuickAccessShellToolbar;
 import com.hexapixel.widgets.ribbon.RibbonShell;
+import com.hexapixel.widgets.ribbon.RibbonTabFolder;
 
 import de.volanakis.ribbonide.internal.e.ICE;
 
@@ -52,9 +53,11 @@ public abstract class AbstractShellBuilder {
 		ribbonShell = new RibbonShell(shell);
 		ribbonShell.setButtonImage(image);
 		ribbonShell.setText(text);
+		configureHelp(ribbonShell.getRibbonTabFolder());
 		fillBigButtonMenu(ribbonShell.getBigButtonMenu());
 		fillQuickAccessToolbar(ribbonShell.getToolbar());
 		ribbonShell.addBigButtonListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				ribbonShell.showBigButtonMenu();
 			}
@@ -79,11 +82,23 @@ public abstract class AbstractShellBuilder {
 		}
 	}
 
+	public final void setImage(Image image) {
+		Assert.isNotNull(image);
+		this.image = image;
+		if (ribbonShell != null) {
+			ribbonShell.setButtonImage(image);
+		}
+	}
+
 	// protected methods
 	// //////////////////
 
 	protected final AbstractTabBuilder[] getTabBuilders() {
 		return tabBuilders.toArray(new AbstractTabBuilder[tabBuilders.size()]);
+	}
+
+	protected void configureHelp(RibbonTabFolder rtf) {
+		// default implementation
 	}
 
 	protected void fillBigButtonMenu(Menu bbMenu) {

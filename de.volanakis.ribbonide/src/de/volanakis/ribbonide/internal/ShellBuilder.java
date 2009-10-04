@@ -17,6 +17,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 import com.hexapixel.widgets.ribbon.QuickAccessShellToolbar;
+import com.hexapixel.widgets.ribbon.RibbonTabFolder;
 
 public final class ShellBuilder extends AbstractWindowBuilder {
 
@@ -26,6 +27,11 @@ public final class ShellBuilder extends AbstractWindowBuilder {
 
 	public ShellBuilder(IWorkbenchWindow window) {
 		super(window);
+	}
+
+	@Override
+	protected void configureHelp(RibbonTabFolder rtf) {
+		RibbonActionFactory.configureHelp(rtf, getWindow());
 	}
 
 	@Override

@@ -67,7 +67,9 @@ final class RibbonTabWithPerspective extends RibbonTab {
 					}
 				}
 			};
-			workbench.getDisplay().asyncExec(op);
+			// this must be synchronous, because we want to switch perspective,
+			// switch tabs and update button enablement state all in one step
+			workbench.getDisplay().syncExec(op);
 		}
 	}
 }

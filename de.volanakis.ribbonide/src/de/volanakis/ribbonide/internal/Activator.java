@@ -11,7 +11,6 @@
 package de.volanakis.ribbonide.internal;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -28,6 +27,8 @@ public final class Activator extends AbstractUIPlugin {
 
 	public static final String ID = "de.volanakis.ui.ide.ribbon";
 	public static final String THEME_ID = "de.volanakis.ribbonide.theme";
+	public static boolean DEBUG = "true".equalsIgnoreCase(System
+			.getProperty("debug"));
 
 	/*
 	 * This bundle is a singleton, otherwise static fields would be trouble
@@ -69,11 +70,41 @@ public final class Activator extends AbstractUIPlugin {
 		return result;
 	}
 
-	public static void log(CoreException cex) {
+	public static void log(Exception exc) {
+		log(LogService.LOG_ERROR, exc);
+	}
+
+	public static void logWarning(Exception exception) {
+		log(LogService.LOG_WARNING, exception);
+	}
+
+	public static void trace(String format, Object... args) {
+		if (Activator.DEBUG) {
+			StackTraceElement[] stackTrace = new Exception().getStackTrace();
+			String filename = "?";
+			if (stackTrace.length > 2) {
+				StackTraceElement se = stackTrace[1];
+				String fullname = se.getFileName();
+				int idxDot = fullname.indexOf('.');
+				if (idxDot != -1) {
+					filename = fullname.substring(0, fullname.indexOf('.'));
+				} else {
+					filename = fullname;
+				}
+			}
+			System.out.println(String.format("[%s] ", filename)
+					+ String.format(format, args));
+		}
+	}
+
+	// helping methods
+	// ////////////////
+
+	private static void log(int severity, Exception exc) {
 		if (logService != null) {
-			logService.log(LogService.LOG_ERROR, cex.getMessage(), cex);
+			logService.log(severity, exc.getMessage(), exc);
 		} else {
-			cex.printStackTrace();
+			exc.printStackTrace();
 		}
 	}
 

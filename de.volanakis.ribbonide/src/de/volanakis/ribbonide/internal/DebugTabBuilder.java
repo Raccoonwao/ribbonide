@@ -10,8 +10,9 @@
  *******************************************************************************/
 package de.volanakis.ribbonide.internal;
 
+import org.eclipse.ui.IWorkbenchWindow;
+
 import com.hexapixel.widgets.ribbon.RibbonButton;
-import com.hexapixel.widgets.ribbon.RibbonButtonGroup;
 import com.hexapixel.widgets.ribbon.RibbonGroup;
 import com.hexapixel.widgets.ribbon.RibbonTab;
 import com.hexapixel.widgets.ribbon.RibbonToolbar;
@@ -21,12 +22,15 @@ import de.volanakis.ribbonide.internal.d.ICD;
 import de.volanakis.ribbonide.internal.e.ICE;
 
 /**
- * Create the 'Edit' Tab, corresponding to the Debug perspective.
+ * Create the 'Debug' Tab, corresponding to the Debug perspective.
  */
 public final class DebugTabBuilder extends AbstractTabBuilder {
 
-	public DebugTabBuilder(AbstractShellBuilder shellBuilder) {
+	private final IWorkbenchWindow window;
+
+	public DebugTabBuilder(AbstractWindowBuilder shellBuilder) {
 		super(shellBuilder, "Debug", "org.eclipse.debug.ui.DebugPerspective");
+		window = shellBuilder.getWindow();
 	}
 
 	@Override
@@ -110,23 +114,6 @@ public final class DebugTabBuilder extends AbstractTabBuilder {
 				RibbonButton.STYLE_ARROW_DOWN_SPLIT);
 	}
 
-	private void createGroupFind(RibbonTab tab) {
-		RibbonGroup group = new RibbonGroup(tab, "Find");
-
-		RibbonButton rbFind = new RibbonButton(group, ICE
-				.getImage("search_30.png"), "Search",
-				RibbonButton.STYLE_ARROW_DOWN_SPLIT);
-
-		RibbonButtonGroup subgroup = new RibbonButtonGroup(group);
-		RibbonButton rbOpenType = new RibbonButton(subgroup, ICE
-				.getImage("opentype.gif"), null, RibbonButton.STYLE_PUSH);
-		// RibbonButton rbOpenResource = new RibbonButton(subgroup,
-		// ICE.getImage("external_tools.gif"), null,
-		// RibbonButton.STYLE_PUSH);
-		RibbonButton rbOpenTask = new RibbonButton(subgroup, ICE
-				.getImage("open-task.gif"), null, RibbonButton.STYLE_PUSH);
-	}
-
 	private void createGroupNavigation(RibbonTab tab) {
 		RibbonGroup group = new RibbonGroup(tab, "Navigate");
 
@@ -135,33 +122,12 @@ public final class DebugTabBuilder extends AbstractTabBuilder {
 
 		RibbonToolbarGrouping rtgNavigate = new RibbonToolbarGrouping(toolbar,
 				1);
-		RibbonButton rbLastEdit = new RibbonButton(rtgNavigate, ICE
-				.getImage("last_edit_pos.gif"), null, RibbonButton.STYLE_PUSH);
-		RibbonButton rbBackward = new RibbonButton(rtgNavigate, ICE
-				.getImage("backward_nav.gif"), null, RibbonButton.STYLE_PUSH);
-		RibbonButton rbForward = new RibbonButton(rtgNavigate, ICE
-				.getImage("forward_nav.gif"), null, RibbonButton.STYLE_PUSH);
+		RibbonActionFactory.createGoLastEdit(rtgNavigate, window);
+		RibbonActionFactory.createGoBackward(rtgNavigate, window);
+		RibbonActionFactory.createGoForward(rtgNavigate, window);
 
 		RibbonToolbarGrouping rtgAnnot = new RibbonToolbarGrouping(toolbar, 2);
-		RibbonButton rbNextAnnotation = new RibbonButton(rtgAnnot, ICE
-				.getImage("next_nav.gif"), null, RibbonButton.STYLE_PUSH);
-		RibbonButton rbPrevAnnotation = new RibbonButton(rtgAnnot, ICE
-				.getImage("prev_nav.gif"), null, RibbonButton.STYLE_PUSH);
-
-		// RibbonButtonGroup sub1 = new RibbonButtonGroup(group);
-		// RibbonButton rbLastEdit = new RibbonButton(sub1, ICE
-		// .getImage("last_edit_pos.gif"), null, RibbonButton.STYLE_PUSH);
-		// RibbonButton rbNextAnnotation = new RibbonButton(sub1, ICE
-		// .getImage("next_nav.gif"), null, RibbonButton.STYLE_PUSH);
-		//
-		// RibbonButtonGroup sub2 = new RibbonButtonGroup(group);
-		// RibbonButton rbBackward = new RibbonButton(sub2, ICE
-		// .getImage("backward_nav.gif"), null, RibbonButton.STYLE_PUSH);
-		// RibbonButton rbPrevAnnotation = new RibbonButton(sub2, ICE
-		// .getImage("prev_nav.gif"), null, RibbonButton.STYLE_PUSH);
-		//
-		// RibbonButtonGroup sub3 = new RibbonButtonGroup(group);
-		// RibbonButton rbForward = new RibbonButton(sub3, ICE
-		// .getImage("forward_nav.gif"), null, RibbonButton.STYLE_PUSH);
+		RibbonActionFactory.createGoNext(rtgAnnot, window);
+		RibbonActionFactory.createGoPrevious(rtgAnnot, window);
 	}
 }

@@ -29,6 +29,9 @@ public abstract class AbstractWindowBuilder extends AbstractShellBuilder {
 		this.window = window;
 	}
 
+	/**
+	 * @return the IWorkbenchWindow for this builder or null
+	 */
 	public final IWorkbenchWindow getWindow() {
 		return window;
 	}

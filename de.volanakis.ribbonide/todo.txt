@@ -8,24 +8,46 @@
 Committed:
 * Finish 1st iteration of the tabs
 * Hook buttons to the commands
-* QuickAccessToolbar: need run, debug, step icons
-
-Proposed:
-* About Ribbon: Help menu entry
-* Custom Presentation: local toolbar hidden by default -> removes clutter, better vspace usage  
+* QuickAccessToolbar: need run, debug, step (?) icons
+* QuickAccessToolbar: seperator element
 * Extend RibbonToolTip to work as a regular tooltip too - don't always need the large tt
+
+Bugs:
 * QuickAccessToolbar: tooltips do not work
 * QuickAccessToolbar: push mouse button down, move mouse -> will drag window
-* Shell: cheese/flicker on resize - should use an SWT Tracker
 * BigButton stuck hover: click BB, click on view, hover still there, move cursor 
   to Ribbon, hover updated -> try a close listener on the BB-menu, reset/repaint hover on close 
-* It seems that the image/text on large tb buttons is not always aligned -> check
+* It seems that the image/text on large toolbar buttons is not always aligned -> check
 * Arrow on large split buttons is not always centered: check 'Run' button
-* Replace gray menus with - nice looking menus for Big Button, Split Arrow Button - see Chrome 3.0 omnibar menu (slightly transparent)
 
 Ideas:
+* About Ribbon: Help menu entry
+* Update check
+   - do not use p2/UM; just get a textfile from server
+   - ask for permission, store preference, needs preference page
+   - 1st iteration: dialog, 2nd: use notification area
+* Feedback / Donation reminder
+   - write timestamp to instance location
+   - 1st iteration: dialog, 2nd: use notification area
+* Custom Presentation: local toolbar hidden by default -> removes clutter, better vspace usage  
+* Shell: cheese/flicker on resize - should use an SWT Tracker
+* Replace gray menus with - nice looking menus for Big Button, Split Arrow Button - see Chrome 3.0 omnibar menu (slightly transparent)
 * Do we need a 'catch all' tab for all other perspectives?
 * 'Run tests' button on the ribbon, should show feedback (green / red)
-* Ambient information on the ribbon: build status, recent commits, mylyn
+* Ambient information (AI) + notifications (NF):
+  - AI: could live on the ribbon: build status, recent commits, mylyn
+  - AI: could use the big button; example for build status
+  - maybe we just have one status area that shown different notifications / 'unread' messages indication
+    - this could be extensible for build, mylyn, commits, etc.
+  - most recent notification could be shown on
+    - the RHS - at the height of the tabs +1
+    - the status bar (mhh)
 * Bugzilla element for Ribbon? (search # or text, create new bug) 
-* Mechanism for allowing contributions? (focus on java not xml)
+* Customization mechanism (ext. point and behavior)
+  1. You should be able to define new tabs
+  2. You should be able to define new groups
+  3. You should be able to associate groups with tabs
+     - have visible by default true/false flag 
+  4. You should be able to associate perspectives with tabs
+  5. You should be able to arrange groups by drag & drop
+  5. Tab settings should persist
