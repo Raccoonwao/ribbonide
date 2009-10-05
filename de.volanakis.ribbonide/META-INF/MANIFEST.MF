@@ -11,6 +11,7 @@ Require-Bundle: com.hexapixel.widgets.ribbon.ev,
  org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.ide.application,
+ org.eclipse.debug.ui,
  org.eclipse.jdt.ui;resolution:=optional,
  org.eclipse.pde.ui;resolution:=optional
 Bundle-ActivationPolicy: lazy

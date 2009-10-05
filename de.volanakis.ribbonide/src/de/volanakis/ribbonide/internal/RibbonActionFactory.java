@@ -17,11 +17,21 @@ import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.ResumeCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepOverCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.SuspendCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateAndRelaunchAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -57,7 +67,8 @@ public final class RibbonActionFactory {
 				STYLE_PUSH);
 		result.setEnabled(false);
 		if (window != null) {
-			new ActionDelegate(result, ActionFactory.SAVE.create(window));
+			new ActionDelegate(result, window, ActionFactory.SAVE
+					.create(window));
 		}
 		return result;
 	}
@@ -69,7 +80,8 @@ public final class RibbonActionFactory {
 				STYLE_PUSH);
 		result.setEnabled(false);
 		if (window != null) {
-			new ActionDelegate(result, ActionFactory.UNDO.create(window));
+			new ActionDelegate(result, window, ActionFactory.UNDO
+					.create(window));
 		}
 		return result;
 	}
@@ -81,7 +93,8 @@ public final class RibbonActionFactory {
 				STYLE_PUSH);
 		result.setEnabled(false);
 		if (window != null) {
-			new ActionDelegate(result, ActionFactory.REDO.create(window));
+			new ActionDelegate(result, window, ActionFactory.REDO
+					.create(window));
 		}
 		return result;
 	}
@@ -179,7 +192,7 @@ public final class RibbonActionFactory {
 	public static RibbonButton createGoPrevious(RibbonToolbarGrouping parent,
 			IWorkbenchWindow window) {
 		RibbonButton result = new RibbonButton(parent, ICE
-				.getImage("next_nav.gif"), ICD.getImage("next_nav.gif"),
+				.getImage("prev_nav.gif"), ICD.getImage("prev_nav.gif"),
 				STYLE_PUSH);
 		if (window != null) {
 			new CommandDelegate(result, "org.eclipse.ui.navigate.previous");
@@ -258,6 +271,111 @@ public final class RibbonActionFactory {
 		return result;
 	}
 
+	public static RibbonButton createResume(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("resume_co.gif"), ICD.getImage("resume_co.gif"),
+				STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window, new ResumeCommandAction());
+		}
+		return result;
+	}
+
+	public static RibbonButton createSuspend(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("suspend_co.gif"), ICD.getImage("suspend_co.gif"),
+				STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window, new SuspendCommandAction())
+					.setTrace(true);
+		}
+		return result;
+	}
+
+	public static RibbonButton createTerminate(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("terminate_co.gif"),
+				ICD.getImage("terminate_co.gif"), STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window,
+					new TerminateCommandAction());
+		}
+		return result;
+	}
+
+	public static RibbonButton createTerminateAndRestart(
+			RibbonToolbarGrouping parent, IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("term_restart_ev.gif"), ICD
+				.getImage("term_restart_ev.gif"), STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window,
+					new TerminateAndRelaunchAction());
+		}
+		return result;
+	}
+
+	public static RibbonButton createStepInto(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("stepinto_co.gif"), ICD.getImage("stepinto_co.gif"),
+				STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window, new StepIntoCommandAction());
+		}
+		return result;
+	}
+
+	public static RibbonButton createStepOver(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("stepover_co.gif"), ICD.getImage("stepover_co.gif"),
+				STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window, new StepOverCommandAction());
+		}
+		return result;
+	}
+
+	public static RibbonButton createStepReturn(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("stepreturn_co.gif"), ICD
+				.getImage("stepreturn_co.gif"), STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window,
+					new StepReturnCommandAction()).setTrace(true);
+		}
+		return result;
+	}
+
+	public static RibbonButton createRunToLine(RibbonToolbarGrouping parent,
+			final IWorkbenchWindow window) {
+		final RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("runtoline_co.gif"),
+				ICD.getImage("runtoline_co.gif"), STYLE_PUSH);
+		if (window != null) {
+			// TODO [ev] later
+			result.setEnabled(false);
+		}
+		return result;
+	}
+
+	public static RibbonButton createDropToFrame(RibbonToolbarGrouping parent,
+			IWorkbenchWindow window) {
+		RibbonButton result = new RibbonButton(parent, ICE
+				.getImage("drop_to_frame.gif"), ICD
+				.getImage("drop_to_frame.gif"), STYLE_PUSH);
+		if (window != null) {
+			new DebugActionDelegate(result, window,
+					new DropToFrameCommandAction());
+		}
+		return result;
+	}
+
 	public static void configureHelp(RibbonTabFolder rtf,
 			IWorkbenchWindow window) {
 		rtf.setHelpImage(ICE.getImage("help_contents.gif"));
@@ -283,36 +401,80 @@ public final class RibbonActionFactory {
 	// helping classes
 	// ////////////////
 
-	private static final class ActionDelegate extends SelectionAdapter
-			implements IPropertyChangeListener, IDisposeListener {
+	private static class ActionDelegate extends SelectionAdapter implements
+			IPropertyChangeListener, IDisposeListener {
 
 		private final RibbonButton button;
+		private final Display display;
 		private final IAction action;
+		private boolean trace;
 
-		public ActionDelegate(final RibbonButton button, IAction action) {
+		public ActionDelegate(final RibbonButton button,
+				IWorkbenchWindow window, IAction action) {
 			this.button = button;
+			this.display = window.getShell().getDisplay();
+			Assert.isNotNull(display);
 			this.action = action;
 
 			button.addDisposeListener(this);
 			action.addPropertyChangeListener(this);
 			button.addSelectionListener(this);
+			button.setEnabled(action.isEnabled());
 		}
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Activator.trace("sel: %s", action.getId());
+			trace("sel: %s", action.getId());
 			button.setSelected(false);
 			action.run();
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
-			button.setEnabled(action.isEnabled());
+			final boolean isEnabled = action.isEnabled();
+			if (isEnabled != button.isEnabled()) {
+				trace("enabl: %s? %s", action.getId(), isEnabled);
+				display.asyncExec(new Runnable() {
+					public void run() {
+						button.setEnabled(isEnabled);
+					}
+				});
+			}
 		}
 
 		public void itemDisposed(AbstractRibbonGroupItem item) {
 			button.removeSelectionListener(this);
 			action.removePropertyChangeListener(this);
 		}
+
+		@SuppressWarnings("unused")
+		void setTrace(boolean trace) {
+			this.trace = trace;
+		}
+
+		private void trace(String format, Object... args) {
+			if (trace) {
+				Activator.trace(format, args);
+			}
+		}
+	}
+
+	private static final class DebugActionDelegate extends ActionDelegate {
+
+		private final DebugCommandAction debugAction;
+
+		public DebugActionDelegate(RibbonButton button,
+				IWorkbenchWindow window, DebugCommandAction action) {
+			super(button, window, action);
+			action.init(window);
+			this.debugAction = action;
+		}
+
+		@Override
+		public void itemDisposed(AbstractRibbonGroupItem item) {
+			super.itemDisposed(item);
+			debugAction.dispose();
+		}
+
 	}
 
 	private static final class CommandDelegate extends SelectionAdapter
@@ -321,6 +483,7 @@ public final class RibbonActionFactory {
 		private final RibbonButton button;
 		private final String commandId;
 		private final Command command;
+		private boolean trace;
 
 		public CommandDelegate(RibbonButton button, String commandId) {
 			this.button = button;
@@ -341,8 +504,8 @@ public final class RibbonActionFactory {
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Activator.trace("sel: %s - e:%s, h:%s", commandId, command
-					.isEnabled(), command.isHandled());
+			trace("sel: %s - e:%s, h:%s", commandId, command.isEnabled(),
+					command.isHandled());
 			button.setSelected(false);
 			try {
 				getHandlerService().executeCommand(commandId, null);
@@ -355,9 +518,11 @@ public final class RibbonActionFactory {
 		}
 
 		public void commandChanged(CommandEvent commandEvent) {
+			trace("CC: %s - d:%s, e:%s, h:%s", commandId, command.isDefined(),
+					command.isEnabled(), command.isHandled());
 			if (commandEvent.isEnabledChanged()) {
 				boolean isEnabled = commandEvent.getCommand().isEnabled();
-				Activator.trace("enabl: %s? %s", commandId, isEnabled);
+				trace("enabl: %s? %s", commandId, isEnabled);
 				button.setEnabled(isEnabled);
 			}
 		}
@@ -365,6 +530,17 @@ public final class RibbonActionFactory {
 		public void itemDisposed(AbstractRibbonGroupItem item) {
 			button.removeSelectionListener(this);
 			command.removeCommandListener(this);
+		}
+
+		@SuppressWarnings("unused")
+		void setTrace(boolean trace) {
+			this.trace = trace;
+		}
+
+		private void trace(String format, Object... args) {
+			if (trace) {
+				Activator.trace(format, args);
+			}
 		}
 	}
 

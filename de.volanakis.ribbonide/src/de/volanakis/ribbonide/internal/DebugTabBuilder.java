@@ -50,37 +50,21 @@ public final class DebugTabBuilder extends AbstractTabBuilder {
 				RibbonToolbar.STYLE_BORDERED, 2);
 
 		RibbonToolbarGrouping rtgFlow1 = new RibbonToolbarGrouping(toolbar, 1);
-		RibbonButton rbResume = new RibbonButton(rtgFlow1, ICE
-				.getImage("resume_co.gif"), ICD.getImage("resume_co.gif"),
-				RibbonButton.STYLE_PUSH);
-		RibbonButton rbSuspend = new RibbonButton(rtgFlow1, ICE
-				.getImage("suspend_co.gif"), ICD.getImage("suspend_co.gif"),
-				RibbonButton.STYLE_PUSH);
-		RibbonButton rbTerminate = new RibbonButton(rtgFlow1, ICE
-				.getImage("terminate_co.gif"),
-				ICD.getImage("terminate_co.gif"), RibbonButton.STYLE_PUSH);
-		RibbonButton rbTerminateRel = new RibbonButton(rtgFlow1, ICE
-				.getImage("term_restart_ev.gif"), ICD
-				.getImage("term_restart_ev.gif"), RibbonButton.STYLE_PUSH);
+		RibbonActionFactory.createResume(rtgFlow1, window);
+		RibbonActionFactory.createSuspend(rtgFlow1, window);
+		RibbonActionFactory.createTerminate(rtgFlow1, window);
+		RibbonActionFactory.createTerminateAndRestart(rtgFlow1, window);
 
 		RibbonToolbarGrouping rtgFlow2 = new RibbonToolbarGrouping(toolbar, 1);
-		RibbonButton rbStepInto = new RibbonButton(rtgFlow2, ICE
-				.getImage("stepinto_co.gif"), ICD.getImage("stepinto_co.gif"),
-				RibbonButton.STYLE_PUSH);
-		RibbonButton rbStepOver = new RibbonButton(rtgFlow2, ICE
-				.getImage("stepover_co.gif"), ICD.getImage("stepover_co.gif"),
-				RibbonButton.STYLE_PUSH);
-		RibbonButton rbStepReturn = new RibbonButton(rtgFlow2, ICE
-				.getImage("stepreturn_co.gif"), ICD
-				.getImage("stepreturn_co.gif"), RibbonButton.STYLE_PUSH);
-		RibbonButton rbRunToLine = new RibbonButton(rtgFlow2, ICE
-				.getImage("runtoline_co.gif"),
-				ICD.getImage("runtoline_co.gif"), RibbonButton.STYLE_PUSH);
+		RibbonActionFactory.createStepInto(rtgFlow2, window);
+		RibbonActionFactory.createStepOver(rtgFlow2, window);
+		RibbonActionFactory.createStepReturn(rtgFlow2, window);
+		// TODO [ev] try this later -- tracking statcke of RTL is not
+		// straightforward
+		// RibbonActionFactory.createRunToLine(rtgFlow2, window);
 
 		RibbonToolbarGrouping rtgFlow3 = new RibbonToolbarGrouping(toolbar, 1);
-		RibbonButton rbDropToFrame = new RibbonButton(rtgFlow3, ICE
-				.getImage("drop_to_frame.gif"), ICD
-				.getImage("drop_to_frame.gif"), RibbonButton.STYLE_PUSH);
+		RibbonActionFactory.createDropToFrame(rtgFlow3, window);
 
 		RibbonToolbarGrouping rtgBP = new RibbonToolbarGrouping(toolbar, 2);
 		RibbonButton rbToggleBP = new RibbonButton(rtgBP, ICE
