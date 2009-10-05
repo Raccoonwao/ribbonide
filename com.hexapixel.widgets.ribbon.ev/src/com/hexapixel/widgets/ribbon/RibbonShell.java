@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Emil Crumhorn - Hexapixel.com - emil.crumhorn@gmail.com
+ * Copyright (c) Emil Crumhorn and others - Hexapixel.com - emil.crumhorn@gmail.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *    eclipse-dev AT volanakis.de - refactored to avoid multiple calls to init,
  *       added constructor for pre-existing shell, made initial layout calc
  *       work for Shell.open(), push button support for QuickAccessToolbar,
- *       auto-redraw on enablement change
+ *       auto-redraw on enablement change, fix: maximize on two-screen setup
  *******************************************************************************/ 
 
 package com.hexapixel.widgets.ribbon;
@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 import com.hexapixel.widgets.generic.ColorCache;
@@ -168,10 +169,8 @@ public class RibbonShell implements MouseListener, MouseMoveListener, KeyListene
 		mNonMaximizedLocation = mShell.getLocation();
 		mNonMaximizedSize = mShell.getSize();
 		
-		Rectangle maxBounds = mShell.getMonitor().getClientArea();
-		
-		mShell.setLocation(0, 0);
-		mShell.setSize(maxBounds.width, maxBounds.height);
+		Monitor monitor = mShell.getMonitor();
+		mShell.setBounds(monitor.getBounds());
 	}
 	
 	private void restore() {
