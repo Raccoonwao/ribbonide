@@ -8,7 +8,9 @@
  * Contributors:
  *    emil.crumhorn@gmail.com  - initial API and implementation
  *    eclipse-dev@volanakis.de - fix: don't dispose shell when close is aborted,
- *                               fix: notify help button on click
+ *                               fix: notify help button on click, fix: compute  
+ *                               correct help icon position when other things  
+ *                               are above folder
  *******************************************************************************/ 
 
 package com.hexapixel.widgets.ribbon;
@@ -782,7 +784,9 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		
 		Rectangle bounds = getBounds();
 		int fromRight = 22;
-		int fromTop = 31;
+		// if the shell and the RibbonTabFolder are not at the same
+		// height (i.e. something is above the ribbon), we must adjust 
+		int fromTop = 31 + computeHeightDelta(getShell(), this);
 		
 		if (isShell()) {
 			if (mRibbonShell.getMaximized()) {
@@ -799,6 +803,12 @@ public class RibbonTabFolder extends Composite implements MouseListener, MouseMo
 		mHelpButton.setBounds(new Rectangle(bounds.x+bounds.width-fromRight, bounds.y+fromTop, 22, 22));				
 		
 		mButtonPainter.drawMenuToolbarButton(gc, mHelpButton);
+	}
+	
+	private int computeHeightDelta(Control topControl, Control btmControl) {
+		int topHeight = topControl.toDisplay(0, 0).y;
+		int btmHeight = btmControl.toDisplay(0, 0).y;
+		return topHeight - btmHeight;
 	}
 	
 	private void createHelpButton() {
