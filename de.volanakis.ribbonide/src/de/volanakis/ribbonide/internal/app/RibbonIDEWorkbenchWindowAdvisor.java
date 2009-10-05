@@ -10,6 +10,7 @@
  *******************************************************************************/
 package de.volanakis.ribbonide.internal.app;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -17,6 +18,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -77,7 +80,7 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(status);
 
 		final Menu menuBar = configurer.createMenuBar();
-		installMenuRevealer(shell, menuBar);
+		installMenuRevealer(ribbon, menuBar);
 
 		// we are only creating this to avoid an NPE in workbench code
 		Control coolbar = configurer.createCoolBarControl(comp);
@@ -104,54 +107,93 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 		return shellBuilder.create();
 	}
 
-	private void installMenuRevealer(final Shell shell, final Menu menuBar) {
-		// ribbon.addMouseMoveListener(new MouseMoveListener() {
-		// public void mouseMove(MouseEvent e) {
-		// if (e.y < 5) {
-		// shell.setMenuBar(menuBar);
-		// } else {
-		// shell.setMenuBar(null);
-		// }
-		// }
-		// });
-		final Listener toggleMenuListener = new Listener() {
-			public void handleEvent(Event event) {
-				if (!fromSameShell(shell, event)) {
-					return;
-				}
-				if (event.type == SWT.KeyDown && event.keyCode == SWT.ALT) {
-					if (shell.getMenuBar() == null) {
-						shell.setMenuBar(menuBar);
-					}
-				} else if (event.type == SWT.KeyUp && event.keyCode == SWT.ALT) {
-					if (shell.getMenuBar() != null) {
-						shell.setMenuBar(null);
-					}
-				}
-			}
+	private void installMenuRevealer(final Control ribbon, final Menu menuBar) {
+		Shell shell = ribbon.getShell();
+		final MenuRevealer menuRevealer = new MenuRevealer(shell, menuBar);
 
-			private boolean fromSameShell(final Shell shell, Event event) {
-				boolean result = true;
-				if (event.widget instanceof Control) {
-					Control control = (Control) event.widget;
-					result = shell == control.getShell();
+		ribbon.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				if (e.y < 5) {
+					menuRevealer.showMenu();
+				} else {
+					menuRevealer.hideMenu();
 				}
-				return result;
-			}
-		};
-		menuBar.addMenuListener(new MenuAdapter() {
-			public void menuHidden(MenuEvent e) {
-				shell.setMenuBar(null);
 			}
 		});
+
+		menuBar.addMenuListener(new MenuAdapter() {
+			@Override
+			public void menuHidden(MenuEvent e) {
+				menuRevealer.hideMenu();
+			}
+		});
+
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				e.display.removeFilter(SWT.KeyUp, toggleMenuListener);
-				e.display.removeFilter(SWT.KeyDown, toggleMenuListener);
+				e.display.removeFilter(SWT.KeyUp, menuRevealer);
+				e.display.removeFilter(SWT.KeyDown, menuRevealer);
 			}
 		});
-		shell.getDisplay().addFilter(SWT.KeyUp, toggleMenuListener);
-		shell.getDisplay().addFilter(SWT.KeyDown, toggleMenuListener);
+		shell.getDisplay().addFilter(SWT.KeyUp, menuRevealer);
+		shell.getDisplay().addFilter(SWT.KeyDown, menuRevealer);
+	}
+
+	// helping classes
+	// ////////////////
+
+	private static final class MenuRevealer implements Listener {
+
+		private final Shell shell;
+		private final Menu menuBar;
+
+		MenuRevealer(Shell shell, Menu menuBar) {
+			Assert.isNotNull(shell);
+			this.shell = shell;
+			Assert.isNotNull(menuBar);
+			this.menuBar = menuBar;
+		}
+
+		public void handleEvent(Event event) {
+			if (!fromSameShell(shell, event)) {
+				return;
+			}
+			if (event.type == SWT.KeyDown && event.keyCode == SWT.ALT) {
+				showMenu();
+			} else if (event.type == SWT.KeyUp && event.keyCode == SWT.ALT) {
+				hideMenu();
+			}
+		}
+
+		public void hideMenu() {
+			if (shell.getMenuBar() != null) {
+				shell.setRedraw(false);
+				try {
+					shell.setMenuBar(null);
+				} finally {
+					shell.setRedraw(true);
+				}
+			}
+		}
+
+		public void showMenu() {
+			if (shell.getMenuBar() == null) {
+				shell.setRedraw(false);
+				try {
+					shell.setMenuBar(menuBar);
+				} finally {
+					shell.setRedraw(true);
+				}
+			}
+		}
+
+		private boolean fromSameShell(final Shell shell, Event event) {
+			boolean result = true;
+			if (event.widget instanceof Control) {
+				Control control = (Control) event.widget;
+				result = shell == control.getShell();
+			}
+			return result;
+		}
 	}
 
 }
