@@ -523,9 +523,10 @@ public abstract class AbstractRibbonGroupItem implements MenuListener, IDisposab
 	}
 	
 	public void redraw() {
-		if(mParent != null) {
+		if(mParent != null && !mParent.isDisposed()) {
 			mParent.redraw(mBounds.x-4, mBounds.y, mBounds.width+8, mBounds.height, false);
-		} else if (mParentQAST != null) {
+		} 
+		else if (mParentQAST != null) {
 			mParentQAST.redraw();
 		}
 	}
