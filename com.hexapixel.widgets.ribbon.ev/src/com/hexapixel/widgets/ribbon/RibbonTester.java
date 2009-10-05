@@ -71,7 +71,7 @@ public class RibbonTester {
 		mtb.setArrowTooltip(new RibbonTooltip("Oh", "Jeez"));
 		
 		Menu shellMenu = shell.getBigButtonMenu();
-		MenuItem btest = new MenuItem(shellMenu, SWT.POP_UP);
+		MenuItem btest = new MenuItem(shellMenu, SWT.NONE);
 		btest.setText("Testing a menu");
 		
 		shell.addBigButtonListener(new SelectionListener() {
@@ -139,7 +139,7 @@ public class RibbonTester {
 		RibbonButton rb = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "I have two\nrows", RibbonButton.STYLE_TWO_LINE_TEXT | RibbonButton.STYLE_ARROW_DOWN);//RibbonButton.STYLE_ARROW_DOWN_SPLIT);
 		RibbonButton rb2 = new RibbonButton(ftg, ImageCache.getImage("olb_picture.gif"), "I'm split\ntoggle", RibbonButton.STYLE_ARROW_DOWN_SPLIT | RibbonButton.STYLE_TOGGLE | RibbonButton.STYLE_TWO_LINE_TEXT);
 		rb2.setBottomOrRightToolTip(toolTip);
-		MenuItem test = new MenuItem(rb2.getMenu(), SWT.POP_UP);
+		MenuItem test = new MenuItem(rb2.getMenu(), SWT.NONE);
 		test.setText("Testing a menu");
 
 		rb2.addSelectionListener(new SelectionListener() {
@@ -218,7 +218,7 @@ public class RibbonTester {
 		RibbonButton rb7 = new RibbonButton(sub, ImageCache.getImage("olb_small3.gif"), "I split normal", RibbonButton.STYLE_ARROW_DOWN_SPLIT);
 		RibbonButton rb8 = new RibbonButton(sub, ImageCache.getImage("olb_small3.gif"), "I am arrowed", RibbonButton.STYLE_ARROW_DOWN);
 
-		MenuItem test2 = new MenuItem(rb8.getMenu(), SWT.POP_UP);
+		MenuItem test2 = new MenuItem(rb8.getMenu(), SWT.NONE);
 		test2.setText("Testing an arrow down menu");
 
 		rb8.addSelectionListener(new SelectionListener() {
