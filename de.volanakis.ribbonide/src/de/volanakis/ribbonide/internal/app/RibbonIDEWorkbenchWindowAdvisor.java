@@ -16,10 +16,15 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -31,6 +36,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 
@@ -79,8 +85,8 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 		final Control status = configurer.createStatusLineControl(comp);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(status);
 
-		final Menu menuBar = configurer.createMenuBar();
-		installMenuRevealer(ribbon, menuBar);
+		// installMenuRevealer(ribbon, configurer);
+		installMenuRevealer2(ribbon, configurer);
 
 		// we are only creating this to avoid an NPE in workbench code
 		Control coolbar = configurer.createCoolBarControl(comp);
@@ -107,9 +113,59 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 		return shellBuilder.create();
 	}
 
-	private void installMenuRevealer(final Control ribbon, final Menu menuBar) {
+	private void installMenuRevealer(final Control ribbon,
+			final IWorkbenchWindowConfigurer configurer) {
 		Shell shell = ribbon.getShell();
+		Menu menuBar = configurer.createMenuBar();
 		final MenuRevealer menuRevealer = new MenuRevealer(shell, menuBar);
+
+		ribbon.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				if (e.y < 5) {
+					menuRevealer.showMenu();
+				} else {
+					menuRevealer.hideMenu();
+				}
+			}
+		});
+
+		menuBar.addMenuListener(new MenuAdapter() {
+			@Override
+			public void menuHidden(MenuEvent e) {
+				menuRevealer.hideMenu();
+			}
+		});
+
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				e.display.removeFilter(SWT.KeyUp, menuRevealer);
+				e.display.removeFilter(SWT.KeyDown, menuRevealer);
+			}
+		});
+		shell.getDisplay().addFilter(SWT.KeyUp, menuRevealer);
+		shell.getDisplay().addFilter(SWT.KeyDown, menuRevealer);
+	}
+
+	private void installMenuRevealer2(final Control ribbon,
+			final IWorkbenchWindowConfigurer configurer) {
+		final Shell shell = ribbon.getShell();
+		final Shell menuShell = new Shell(shell, SWT.NO_TRIM);
+		WorkbenchWindow window = (WorkbenchWindow) configurer.getWindow();
+		Menu menuBar = window.getMenuManager().createMenuBar(menuShell);
+		menuShell.setMenuBar(menuBar);
+
+		final MenuRevealer2 menuRevealer = new MenuRevealer2(shell, menuShell);
+
+		menuShell.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.F4 && e.stateMask == SWT.ALT) {
+					configurer.getWindow().close();
+				} else if (e.keyCode == SWT.ESC) {
+					menuRevealer.hideMenu();
+				}
+			}
+		});
 
 		ribbon.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
@@ -141,6 +197,9 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 	// helping classes
 	// ////////////////
 
+	/**
+	 * Reveals/hides a MenuBar in the current shell.
+	 */
 	private static final class MenuRevealer implements Listener {
 
 		private final Shell shell;
@@ -194,6 +253,93 @@ public class RibbonIDEWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 			}
 			return result;
 		}
+	}
+
+	/**
+	 * Reveals/hides a second shell with the menu.
+	 */
+	private static final class MenuRevealer2 implements Listener {
+
+		private final Shell shell;
+		private final Shell menuShell;
+
+		MenuRevealer2(Shell shell, Shell menuShell) {
+			Assert.isNotNull(shell);
+			this.shell = shell;
+			menuShell.open();
+			menuShell.setVisible(false);
+			menuShell.setAlpha(230);
+			this.menuShell = menuShell;
+		}
+
+		public void handleEvent(Event event) {
+			if (!(fromSameShell(shell, event) || fromSameShell(menuShell, event))) {
+				return;
+			}
+			if (event.type == SWT.KeyDown && event.keyCode == SWT.ALT) {
+				showMenu();
+			} else if (event.type == SWT.KeyUp && event.keyCode == SWT.ALT) {
+				hideMenu();
+			}
+		}
+
+		public void hideMenu() {
+			if (menuShell.isVisible()) {
+				boolean hasFocus = menuShell.isFocusControl();
+				menuShell.setVisible(false);
+				if (hasFocus) {
+					shell.setFocus();
+				}
+			}
+		}
+
+		public void showMenu() {
+			if (!menuShell.isVisible()) {
+				Point dLoc = shell.toDisplay(0, 0);
+				Point size = shell.getSize();
+				menuShell.setLocation(dLoc.x, dLoc.y);
+				menuShell.setSize(size.x, 20 + 10);
+				updateRegion(menuShell);
+				menuShell.setVisible(true);
+				menuShell.setFocus();
+			}
+		}
+
+		private boolean fromSameShell(final Shell shell, Event event) {
+			boolean result = true;
+			if (event.widget instanceof Control) {
+				Control control = (Control) event.widget;
+				result = shell == control.getShell();
+			}
+			return result;
+		}
+
+		private void updateRegion(Shell menuShell) {
+			Region region = new Region(menuShell.getDisplay());
+			Rectangle bounds = menuShell.getBounds();
+			int maxX = bounds.width;
+			int maxY = bounds.height;
+
+			region.add(0, 0, maxX, maxY);
+
+			int screenWidth = menuShell.getMonitor().getBounds().x;
+			if (maxX != screenWidth) { // not maximized
+				// top left
+				region.subtract(0, 0, 4, 1);
+				region.subtract(0, 1, 2, 1);
+				region.subtract(0, 2, 1, 1);
+				region.subtract(0, 3, 1, 1);
+
+				// top right
+				region.subtract(maxX - 4, 0, 4, 1);
+				region.subtract(maxX - 2, 1, 2, 1);
+				region.subtract(maxX - 1, 2, 1, 1);
+				region.subtract(maxX - 1, 3, 1, 1);
+			}
+
+			menuShell.setRegion(region);
+		}
+
 	}
 
 }
