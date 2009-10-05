@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Emil Crumhorn and others- Hexapixel.com - emil.crumhorn@gmail.com
+ * Copyright (c) Emil Crumhorn and others - Hexapixel.com - emil.crumhorn@gmail.com
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *    emil.crumhorn@gmail.com  - initial API and implementation
- *    eclipse-dev@volanakis.de - added STYLE_PUSH
+ *    eclipse-dev@volanakis.de - added STYLE_PUSH, tooltips for RibbonToolbar
+ *        elements
  *******************************************************************************/ 
 
 package com.hexapixel.widgets.ribbon;
@@ -326,95 +327,77 @@ public class RibbonGroup extends Canvas implements MouseMoveListener, MouseListe
 			}
 		}
 		
+		RibbonTooltip tip = null;
+		int tipXLocation = me.x; // initialize for compiler's peace
+		
 		for (final AbstractRibbonGroupItem item : mToolItems) {
-			if (item.getBounds() == null)
+			if (item.getBounds() == null || tip != null)
 				continue;
-							
+			
 			if (item instanceof RibbonButton) {
 				if (isInside(me.x, me.y, item.getBounds())) {
-					
-					if (item.isSplit()) {
-						RibbonTooltip tip = null;
-						
-						if (isInside(me.x, me.y, item.getTopBounds())) {
-							if (item.getTopOrLeftToolTip() != null) 
-								tip = item.getTopOrLeftToolTip();
-							else
-								tip = getTooltip(item, true, false);
-						}
-						else if (isInside(me.x, me.y, item.getBottomBounds())) {
-							if (item.getBottomOrRightToolTip() != null)
-								tip = item.getBottomOrRightToolTip();
-							else
-								tip = getTooltip(item, false, true);
-						}
-												
-						if (tip != null) {
-	    					RibbonTooltipDialog.makeDialog(tip, toDisplay((new Point(item.getBounds().x, getBounds().height + 5))));
-							return;
-						}
-					}
-					else {
-						RibbonTooltip tip = null;
-
-						if (item.getToolTip() != null) 							
-							tip = item.getToolTip();
-						else
-							tip = getTooltip(item, false, false);
-						
-						if (tip != null) {
-	    					RibbonTooltipDialog.makeDialog(item.getToolTip(), toDisplay((new Point(item.getBounds().x, getBounds().height + 5))));
-							return;
-						}
-					}
+					tip = getToolTip(item, me);
+					tipXLocation = item.getBounds().x;
 				}
 			}
 			else if (item instanceof RibbonButtonGroup) {
 				RibbonButtonGroup rbg = (RibbonButtonGroup) item;
 				List<AbstractRibbonGroupItem> buttons = rbg.getButtons();
 				for (AbstractRibbonGroupItem button : buttons) {
-					if (button.getBounds() == null)
+					if (button.getBounds() == null || tip != null)
 						continue;
-										
 					if (isInside(me.x, me.y, button.getBounds())) {
-						if (item.isSplit()) {
-							RibbonTooltip tip = null;
-							
-							if (isInside(me.x, me.y, item.getTopBounds())) {
-								if (item.getTopOrLeftToolTip() != null) 
-									tip = item.getTopOrLeftToolTip();
-								else
-									tip = getTooltip(item, true, false);								
-							}
-							else if (isInside(me.x, me.y, item.getBottomBounds())) {
-								if (item.getBottomOrRightToolTip() != null)
-									tip = item.getBottomOrRightToolTip();
-								else
-									tip = getTooltip(item, false, true);
-							}
-							
-							if (tip != null) {
-		    					RibbonTooltipDialog.makeDialog(tip, toDisplay((new Point(item.getBounds().x, getBounds().height + 5))));
-								return;
-							}
-						}
-						else {
-							RibbonTooltip tip = null;
-
-							if (item.getToolTip() != null) 							
-								tip = item.getToolTip();
-							else
-								tip = getTooltip(item, false, false);
-							
-							if (tip != null) {
-		    					RibbonTooltipDialog.makeDialog(button.getToolTip(), toDisplay((new Point(button.getBounds().x, getBounds().height + 5))));
-								return;									
-							}
-						}
+						tip = getToolTip(button, me);
+						tipXLocation = button.getBounds().x;
 					}
 				}
 			}
 		}
+		
+		for (final RibbonToolbar toolbar : mToolbars) {
+			List<RibbonToolbarGrouping> groupings = toolbar.getGroupings();
+			for (final RibbonToolbarGrouping grouping : groupings) {
+				List<RibbonButton> buttons = grouping.getItems();
+				for (RibbonButton button : buttons) {
+					if (button.getBounds() == null || tip != null)
+						continue;
+					if (isInside(me.x, me.y, button.getBounds())) {
+						tip = getToolTip(button, me);
+						tipXLocation = button.getBounds().x;
+					}
+				}
+			}
+		}
+		
+		if (tip != null) {
+			RibbonTooltipDialog.makeDialog(tip, toDisplay((new Point(tipXLocation, getBounds().height + 5))));
+		}
+	}
+
+	private RibbonTooltip getToolTip(final AbstractRibbonGroupItem item,
+			MouseEvent me) {
+		RibbonTooltip tip = null;
+		if (item.isSplit()) {
+			if (isInside(me.x, me.y, item.getTopBounds())) {
+				if (item.getTopOrLeftToolTip() != null) 
+					tip = item.getTopOrLeftToolTip();
+				else
+					tip = getTooltip(item, true, false);
+			}
+			else if (isInside(me.x, me.y, item.getBottomBounds())) {
+				if (item.getBottomOrRightToolTip() != null)
+					tip = item.getBottomOrRightToolTip();
+				else
+					tip = getTooltip(item, false, true);
+			}
+		}
+		else {
+			if (item.getToolTip() != null) 							
+				tip = item.getToolTip();
+			else
+				tip = getTooltip(item, false, false);
+		}
+		return tip;
 	}
 	
 	public void mouseDoubleClick(MouseEvent e) {
